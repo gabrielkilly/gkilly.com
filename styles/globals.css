@@ -1,0 +1,103 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "InputMono";
+  src: url("/fonts/InputMono-MediumItalic.ttf") format("truetype");
+  font-weight: 500;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "InputMono";
+  src: url("/fonts/InputMono-Medium.ttf") format("truetype");
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: "InputMono";
+  src: url("/fonts/InputMono-Regular.ttf") format("truetype");
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "InputMono";
+  src: url("/fonts/InputMono-Italic.ttf") format("truetype");
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "InputMono";
+  src: url("/fonts/InputMono-BoldItalic.ttf") format("truetype");
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: "InputSans";
+  src: url("/fonts/InputSans-Regular.ttf") format("truetype");
+}
+
+h1 {
+  font-family: "InputMono";
+  font-size: 1.5rem;
+  font-style: italic;
+  font-weight: 500;
+  color: theme(colors.white);
+}
+
+h2 {
+  font-family: "InputMono";
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: theme(colors.orange.1);
+}
+
+nav.a {
+  font-family: "InputMono";
+  font-size: 1.375rem;
+  font-style: italic;
+  font-weight: 700;
+  color: theme(colors.purple);
+}
+
+.nav {
+  font-family: "InputMono";
+  font-size: 1.375rem;
+  font-style: italic;
+  font-weight: 700;
+  color: theme(colors.purple);
+}
+
+p {
+  font-family: "InputSans";
+  font-size: 1rem;
+  color: theme(colors.white);
+}
+
+.text-block {
+  display: flex;
+  padding: 1.875rem;
+  align-items: flex-start;
+  gap: 1.875rem;
+  align-self: stretch;
+
+  border-radius: 0.3125rem;
+  background: theme(colors.gray.2);
+}
+
+button {
+  display: flex;
+  padding: 0.625rem 0.9375rem;
+  align-items: center;
+  gap: 0.625rem;
+  border-radius: 0.3125rem;
+}
+
+button.primary {
+  background: theme(colors.orange.3);
+}
+
+button.secondary {
+  background: theme(colors.gray.1);
+}
