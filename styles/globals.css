@@ -86,18 +86,26 @@ p {
   background: theme(colors.gray.2);
 }
 
-button {
+button, .button {
   display: flex;
   padding: 0.625rem 0.9375rem;
   align-items: center;
   gap: 0.625rem;
   border-radius: 0.3125rem;
+  color: theme(colors.white);
+  font-family: "InputMono";
+  font-size: 1.25rem;
+  font-weight: 500;
 }
 
-button.primary {
+button.primary, .button.primary {
   background: theme(colors.orange.3);
 }
 
-button.secondary {
+button.secondary, .button.secondary {
   background: theme(colors.gray.1);
+}
+
+html, main {
+  background-color: theme(colors.purple);
 }
