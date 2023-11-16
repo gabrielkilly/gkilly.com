@@ -1,3 +1,4 @@
+import Link from "next/link"
 
 interface ButtonProps {
     text: string, //text on button
@@ -14,12 +15,12 @@ export enum ButtonType {
 
 export default function Button({ text, icon, href, hrefTarget, type }: ButtonProps) {
     return (
-        <a href={href} target={hrefTarget}>
+        <Link href={href} target={hrefTarget}>
             <button className={type ?? ButtonType.primary}>
                     { text } 
                     <img src={`/icons/${icon}.svg`} />
             </button>
-        </a>
+        </Link>
     )
     
 }

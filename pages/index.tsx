@@ -13,7 +13,7 @@ export default function Home() {
           <h2>B.S. Computer Science at Trinity University</h2>
         </div>
         <div className="text-block">
-          <p>Hello, I'm Gabriel Killy, a software engineer interested in creating impactful, useful, & detail-oriented products for the people that use them.</p>
+          <p>Hello, I&apos;m Gabriel Killy, a software engineer interested in creating impactful, useful, & detail-oriented products for the people that use them.</p>
         </div>
         <div className="flex flex-row gap-4">
           {/* <Button text="Projects" href="/projects" icon="arrow-right" /> */}
