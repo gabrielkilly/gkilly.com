@@ -81,8 +81,10 @@ p {
   align-items: flex-start;
   gap: 1.875rem;
   align-self: stretch;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
 
-  border-radius: 0.3125rem;
+  /* border-radius: 0.3125rem; */
   background: theme(colors.gray.2);
 }
 

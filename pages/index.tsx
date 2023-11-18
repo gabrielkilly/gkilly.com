@@ -7,12 +7,12 @@ export default function Home() {
   return (
       <RootLayout>
         <h1>Software Engineer at USAA</h1>
-        <div className="flex flex-col gap-1">
-          <h2>4 years industry experience</h2>
-          <h2>Experience working in Native, Web, & Backend environments</h2>
-          <h2>B.S. Computer Science at Trinity University</h2>
+        <div className="flex flex-col gap-4 lg:gap-2">
+          <h2 className="text-base md:text-xl">4 years industry experience</h2>
+          <h2 className="text-base md:text-xl">Experience working in Native, Web, & Backend environments</h2>
+          <h2 className="text-base md:text-xl">B.S. Computer Science at Trinity University</h2>
         </div>
-        <div className="text-block">
+        <div className="flex p-8 items-start self-stretch bg-gray-2 w-screen md:w-full ml-[calc(50%-50vw)] md:ml-0 md:rounded">
           <p>Hello, I&apos;m Gabriel Killy, a software engineer interested in creating impactful, useful, & detail-oriented products for the people that use them.</p>
         </div>
         <div className="flex flex-row gap-4">
