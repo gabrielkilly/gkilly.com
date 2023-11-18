@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export enum NavLinks {
   projects = "/projects",
-  resume = "https://mega.nz/file/f8clERpT#1ot9ZkumrBCrtUT5Wr6cqMFiC5SmAZocDqj4o5EUj5w"
+  resume = "https://mega.nz/folder/71M1lbJS#P7t2wf7ojBH1gG30Ym-mQg"
 }
 
 
