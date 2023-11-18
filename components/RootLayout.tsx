@@ -1,3 +1,4 @@
+import Head from "next/head"
 import Navbar from "./Navbar"
 
 interface RootLayoutProps {
@@ -7,6 +8,11 @@ interface RootLayoutProps {
 export default function RootLayout({ children } : RootLayoutProps) {
     return (
         <>
+            <Head>
+                <title>Gabriel Killy | Software Engineer</title>
+                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                <link rel="icon" href="/favicon.ico" />
+            </Head>
             <Navbar />
             <main>
                 <div className="flex justify-center w-full">
