@@ -1,0 +1,35 @@
+---
+interface Props {
+  text:      string;
+  delay?:    number;  // delay before animation starts (ms)
+  class?:    string;
+  color?:    string;
+}
+
+const {
+  text,
+  delay  = 0,
+  class: className = '',
+  color  = '#F8F8F2',
+} = Astro.props;
+
+const chars        = text.length;
+const typingDuration = `${(chars * 42)}ms`;
+const delayStr     = `${delay}ms`;
+const uid          = `tw-${Math.random().toString(36).slice(2, 8)}`;
+---
+
+<span
+  id={uid}
+  class={`typewriter-text inline-block overflow-hidden whitespace-nowrap ${className}`}
+  style={`
+    color: ${color};
+    width: 0;
+    border-right: 2px solid ${color};
+    animation:
+      typing ${typingDuration} steps(${chars}, end) ${delayStr} forwards,
+      blink-cursor 0.7s step-end ${delayStr} infinite;
+  `}
+>
+  {text}
+</span>

@@ -1,0 +1,54 @@
+---
+import '../styles/global.css';
+import BootSequence from '../components/boot/BootSequence.astro';
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+import { SITE } from '../lib/constants';
+
+interface Props {
+  title?:       string;
+  description?: string;
+  noHeader?:    boolean;
+}
+
+const {
+  title       = SITE.name,
+  description = SITE.description,
+  noHeader    = false,
+} = Astro.props;
+
+const fullTitle =
+  title === SITE.name
+    ? `${SITE.name} ~ ${SITE.title}`
+    : `${title} | ${SITE.name}`;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta property="og:title"       content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url"         content={SITE.url} />
+    <title>{fullTitle}</title>
+
+    <!-- JetBrains Mono from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body>
+    <BootSequence />
+    {!noHeader && <Header />}
+    <main>
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

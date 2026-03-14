@@ -1,0 +1,32 @@
+---
+interface Props {
+  title?:    string;
+  class?:    string;
+  noPad?:    boolean;
+}
+
+const {
+  title  = 'terminal',
+  class: className = '',
+  noPad  = false,
+} = Astro.props;
+---
+
+<div class={`border border-[#6272A4] rounded-md overflow-hidden ${className}`}>
+
+  <!-- Title bar -->
+  <div class="flex items-center gap-2 px-4 py-2 bg-[#1E1F29] border-b border-[#6272A4] select-none">
+    <span class="w-3 h-3 rounded-full bg-[#FF5555] opacity-60"></span>
+    <span class="w-3 h-3 rounded-full bg-[#F1FA8C] opacity-60"></span>
+    <span class="w-3 h-3 rounded-full bg-[#50FA7B] opacity-60"></span>
+    <span class="ml-3 text-xs text-[#6272A4] flex-1 text-center font-mono">
+      {title}
+    </span>
+  </div>
+
+  <!-- Content -->
+  <div class={`bg-[#1E1F29] ${noPad ? '' : 'p-5'}`}>
+    <slot />
+  </div>
+
+</div>

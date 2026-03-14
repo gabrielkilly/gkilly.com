@@ -1,0 +1,51 @@
+---
+import { SITE } from '../../lib/constants';
+
+const nav = [
+  { label: '~',       href: '/'          },
+  { label: 'blog',    href: '/blog'      },
+];
+
+const currentPath = Astro.url.pathname;
+---
+
+<header class="border-b border-[#6272A4]/40 sticky top-0 z-50 bg-[#282A36]/95 backdrop-blur-sm">
+  <nav class="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
+
+    <!-- Prompt -->
+    <a href="/" class="font-mono text-sm group">
+      <span class="text-[#50FA7B]">{SITE.name}</span>
+      <span class="text-[#6272A4]">@portfolio</span>
+      <span class="text-[#F8F8F2]">:</span>
+      <span class="text-[#8BE9FD]">~</span>
+      <span class="text-[#F8F8F2]">$</span>
+      <span
+        class="inline-block w-2 h-4 bg-[#F8F8F2] ml-1 align-middle opacity-70
+               group-hover:opacity-100"
+        style="animation: blink-cursor 1s step-end infinite"
+      ></span>
+    </a>
+
+    <!-- Nav links -->
+    <div class="flex items-center gap-4">
+      {nav.map(item => {
+        const isActive = item.href === '/'
+          ? currentPath === '/'
+          : currentPath.startsWith(item.href);
+        return (
+          <a
+            href={item.href}
+            class={`text-sm font-mono transition-colors ${
+              isActive
+                ? 'text-[#BD93F9]'
+                : 'text-[#6272A4] hover:text-[#F8F8F2]'
+            }`}
+          >
+            {item.label}
+          </a>
+        );
+      })}
+    </div>
+
+  </nav>
+</header>

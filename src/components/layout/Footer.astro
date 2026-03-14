@@ -1,0 +1,21 @@
+---
+import { SITE } from '../../lib/constants';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-[#6272A4]/30 mt-16">
+  <div class="max-w-3xl mx-auto px-4 py-6">
+    <p class="text-xs text-[#6272A4] font-mono text-center">
+      <span class="text-[#50FA7B]">[  OK  ]</span>
+      &nbsp;{SITE.name} · {year} ·
+      <a href={SITE.github} target="_blank" rel="noopener" class="hover:text-[#BD93F9]">
+        source
+      </a>
+      &nbsp;· built with
+      <a href="https://astro.build" target="_blank" rel="noopener" class="hover:text-[#BD93F9]">
+        astro
+      </a>
+    </p>
+  </div>
+</footer>

@@ -1,0 +1,66 @@
+---
+import { CATEGORIES } from '../../lib/constants';
+import { categoryColor } from '../../lib/utils';
+
+interface Props {
+  active?: string; // current active category slug, or undefined for "all"
+}
+
+const { active } = Astro.props;
+
+const allTab = { slug: 'all', label: 'All', href: '/blog' };
+const tabs   = CATEGORIES.map(c => ({ ...c, href: `/blog/${c.slug}` }));
+---
+
+<nav class="flex items-center gap-1 flex-wrap mb-8">
+  <!-- "All" tab -->
+  <a
+    href={allTab.href}
+    class={`
+      text-xs font-mono px-3 py-1.5 rounded border transition-colors duration-100
+      ${!active
+        ? 'border-[#BD93F9] text-[#BD93F9] bg-[#BD93F9]/10'
+        : 'border-[#6272A4] text-[#6272A4] hover:border-[#BD93F9] hover:text-[#BD93F9]'}
+    `}
+  >
+    {allTab.label}
+  </a>
+
+  <!-- Category tabs -->
+  {tabs.map(tab => {
+    const color   = categoryColor(tab.slug);
+    const isActive = active === tab.slug;
+    return (
+      <a
+        href={tab.href}
+        class="text-xs font-mono px-3 py-1.5 rounded border transition-colors duration-100"
+        style={isActive
+          ? `color: ${color}; border-color: ${color}; background: ${color}18`
+          : `color: #6272A4; border-color: #6272A4`
+        }
+        data-hover-color={color}
+      >
+        {tab.label}
+      </a>
+    );
+  })}
+</nav>
+
+<script>
+  // Hover effect for inactive category tabs using data attribute
+  document.querySelectorAll<HTMLAnchorElement>('a[data-hover-color]').forEach(el => {
+    const color = el.dataset.hoverColor!;
+    el.addEventListener('mouseenter', () => {
+      if (!el.style.background) {
+        el.style.color       = color;
+        el.style.borderColor = color;
+      }
+    });
+    el.addEventListener('mouseleave', () => {
+      if (!el.style.background) {
+        el.style.color       = '#6272A4';
+        el.style.borderColor = '#6272A4';
+      }
+    });
+  });
+</script>

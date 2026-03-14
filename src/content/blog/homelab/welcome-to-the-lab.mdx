@@ -1,0 +1,44 @@
+---
+title: "Welcome to the Lab"
+description: "My homelab journey — from a single Raspberry Pi to a multi-node Proxmox cluster running 20+ services."
+date: 2026-03-10
+category: homelab
+tags: [proxmox, docker, networking, self-hosting]
+draft: false
+---
+
+# Welcome to the Lab
+
+It started with a Raspberry Pi 4 and a Pi-hole instance. That was three years ago.
+
+Today, my homelab is a three-node Proxmox cluster with a dedicated NAS, a managed switch, a separate VLAN for IoT devices, and somewhere around 20 self-hosted services running across a mix of LXC containers and VMs.
+
+This is the first post in a series documenting how it all came together — the decisions, the disasters, and what I'd do differently.
+
+## The Hardware Stack
+
+```
+Node 1: Intel NUC 12 Pro — 64GB RAM, 2TB NVMe
+Node 2: Beelink Mini PC   — 32GB RAM, 1TB NVMe
+Node 3: Raspberry Pi 5    — 8GB RAM  (lightweight agents only)
+NAS:    TrueNAS Scale     — 4x4TB drives in RAIDZ1
+Switch: MikroTik CRS326
+```
+
+## Why Proxmox?
+
+After running Docker directly on bare metal for years, Proxmox was the upgrade that changed everything. The ability to snapshot, clone, and migrate VMs before doing risky upgrades is worth the overhead alone.
+
+LXC containers are a great middle ground between VMs and bare Docker — they share the host kernel but maintain strong isolation.
+
+## Services Running Today
+
+- **Nginx Proxy Manager** — SSL termination for all internal services
+- **Vaultwarden** — self-hosted Bitwarden-compatible password manager
+- **Immich** — Google Photos alternative for my photo library
+- **Jellyfin** — media server
+- **Gitea** — private Git hosting
+- **Uptime Kuma** — service monitoring with alerts
+- **Grafana + Prometheus** — metrics and dashboards
+
+More posts coming on each of these. Next up: how I set up the Proxmox cluster from scratch.

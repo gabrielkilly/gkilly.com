@@ -1,0 +1,32 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const path = Astro.url.pathname;
+---
+
+<BaseLayout title="404 — not found">
+  <div class="min-h-[60vh] flex items-center justify-center px-4">
+    <div class="font-mono text-center space-y-4">
+
+      <p class="text-[#6272A4] text-sm">
+        <span class="text-[#50FA7B]">$</span> cd {path}
+      </p>
+
+      <p class="text-[#FF5555] text-sm">
+        bash: cd: {path}: No such file or directory
+      </p>
+
+      <p class="text-2xl font-bold text-[#BD93F9]">404</p>
+
+      <p class="text-[#6272A4] text-sm">
+        The page you're looking for doesn't exist.
+      </p>
+
+      <div class="pt-4 space-x-4">
+        <a href="/" class="text-sm text-[#FF79C6] hover:text-[#BD93F9]">cd ~</a>
+        <a href="/blog" class="text-sm text-[#FF79C6] hover:text-[#BD93F9]">cd ~/blog</a>
+      </div>
+
+    </div>
+  </div>
+</BaseLayout>

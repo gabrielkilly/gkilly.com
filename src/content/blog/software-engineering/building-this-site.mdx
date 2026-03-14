@@ -1,0 +1,58 @@
+---
+title: "Building This Site"
+description: "How I built gkilly.com — the decisions behind a terminal-themed Astro site with a fake interactive shell."
+date: 2026-03-14
+category: software-engineering
+tags: [astro, typescript, design, web]
+draft: false
+---
+
+# Building This Site
+
+Every developer eventually builds their personal site. Here's how I built mine, and the thinking behind each decision.
+
+## Why Astro?
+
+I've built personal sites with Next.js, Gatsby, and even just raw HTML. This time I wanted something that:
+
+1. Ships **zero JavaScript by default**
+2. Has **first-class MDX support** for the blog
+3. Is **genuinely fast** to build and deploy
+4. Doesn't force a component framework on me
+
+Astro checks every box. For a static blog + business card site, it's the right tool. The island architecture means I can add interactivity exactly where I need it, without sending a React runtime to the browser for a page that's mostly just text.
+
+## The Terminal Aesthetic
+
+The design concept: what if a personal website looked like a terminal session?
+
+It's not just an aesthetic choice. It's thematically honest — most of my work happens in a terminal. Neovim, tmux, ssh sessions, docker commands. The browser is for consuming things; the terminal is for building them.
+
+The interactive shell on the homepage is a fun experiment. It's pure vanilla TypeScript — no libraries. Visitors can type commands like `whoami`, `ls projects/`, `cat skills.json` to explore the card. It's a bit of a gimmick, but a fun one.
+
+## Tech Stack
+
+```json
+{
+  "framework": "Astro 6.x",
+  "styling": "Tailwind CSS v4",
+  "content": "MDX (Content Collections)",
+  "theme": "Dracula",
+  "font": "JetBrains Mono",
+  "deploy": "Vercel"
+}
+```
+
+## The Boot Sequence
+
+The boot animation on first load is generated entirely with `setTimeout` chains and appended DOM nodes. No animation libraries. It reads `sessionStorage` to avoid replaying on every page visit — only fires once per session.
+
+The lines are fake systemd output mixed with kernel messages. Nobody reads them, but they set the vibe before the main card loads.
+
+## Lessons Learned
+
+**Tailwind v4 is different.** The `@theme` block in CSS replaces `tailwind.config.js`. It took 20 minutes to figure out why my custom colors weren't working. The docs are good once you find them.
+
+**Astro Content Collections are excellent.** Schema validation on frontmatter is something I didn't know I needed until I had it. No more silently broken posts.
+
+The code is on [GitHub](https://github.com/gkilly/gkilly.com).

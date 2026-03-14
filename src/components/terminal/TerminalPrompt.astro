@@ -1,0 +1,260 @@
+---
+// TerminalPrompt — Interactive fake shell on the homepage
+// All logic lives in the inline <script> below
+---
+
+<div
+  id="terminal-prompt"
+  class="font-mono text-sm"
+  style="min-height: 240px"
+>
+  <!-- Output lines accumulate here -->
+  <div id="term-output" class="space-y-1 mb-4"></div>
+
+  <!-- Input line -->
+  <div class="flex items-center gap-1" id="term-input-row">
+    <span class="text-[#50FA7B] select-none">[gkilly@portfolio ~]$</span>
+    <div class="relative flex-1 flex items-center">
+      <input
+        id="term-input"
+        type="text"
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="none"
+        spellcheck="false"
+        class="absolute inset-0 opacity-0 w-full bg-transparent outline-none cursor-default"
+        aria-label="Terminal input"
+      />
+      <!-- Fake visible input display -->
+      <span id="term-display" class="text-[#F8F8F2] min-h-[1em]"></span>
+      <span
+        id="term-cursor"
+        class="inline-block w-2 h-[1.1em] bg-[#F8F8F2] ml-px align-middle"
+        style="animation: blink-cursor 0.8s step-end infinite"
+      ></span>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── Terminal Prompt Logic ────────────────────────────────────────────────────
+(function () {
+  const output  = document.getElementById('term-output')!;
+  const input   = document.getElementById('term-input') as HTMLInputElement;
+  const display = document.getElementById('term-display')!;
+
+  // Focus input whenever the terminal area is clicked
+  document.getElementById('terminal-prompt')!.addEventListener('click', () => {
+    input.focus();
+  });
+
+  // Keep display in sync with input value
+  input.addEventListener('input', () => {
+    display.textContent = input.value;
+  });
+
+  // ─── Command history ──────────────────────────────────────────────────────
+  const history: string[] = [];
+  let historyIndex = -1;
+
+  // ─── Command definitions ──────────────────────────────────────────────────
+  type CmdResult = string | string[];
+
+  const COMMANDS: Record<string, () => CmdResult> = {
+
+    help: () => [
+      '<span style="color:#BD93F9">Available commands</span>',
+      '',
+      '  <span style="color:#50FA7B">whoami</span>              — about me',
+      '  <span style="color:#50FA7B">cat about.txt</span>       — longer bio',
+      '  <span style="color:#50FA7B">cat skills.json</span>     — tech stack',
+      '  <span style="color:#50FA7B">ls projects/</span>        — featured projects',
+      '  <span style="color:#50FA7B">ls blog/</span>            — blog categories',
+      '  <span style="color:#50FA7B">social</span>              — links',
+      '  <span style="color:#50FA7B">cd blog/&lt;category&gt;</span>  — navigate to blog',
+      '  <span style="color:#50FA7B">clear</span>               — clear terminal',
+      '',
+      'Tip: use ↑ / ↓ to navigate history',
+    ],
+
+    whoami: () => [
+      '<span style="color:#BD93F9">gkilly</span>',
+      '<span style="color:#F8F8F2">Senior Software Engineer</span>',
+      '<span style="color:#6272A4">Building systems, shipping products, breaking things in homelab.</span>',
+    ],
+
+    'cat about.txt': () => [
+      '<span style="color:#F1FA8C">about.txt</span>',
+      '──────────────────────────────────────────',
+      'I\'m a Senior Software Engineer with a deep interest',
+      'in distributed systems, developer tooling, and infrastructure.',
+      '',
+      'By day I build software that scales. By night I run a',
+      'Proxmox cluster in my apartment and listen to jazz records.',
+      '',
+      'This site is my corner of the internet.',
+      '──────────────────────────────────────────',
+    ],
+
+    'cat skills.json': () => {
+      const json = {
+        languages:  ['TypeScript', 'Python', 'Go', 'SQL', 'Bash'],
+        frontend:   ['React', 'Astro', 'Next.js', 'Tailwind'],
+        backend:    ['Node.js', 'FastAPI', 'PostgreSQL', 'Redis'],
+        infra:      ['Docker', 'Kubernetes', 'AWS', 'Terraform', 'Linux'],
+        tools:      ['Git', 'Neovim', 'tmux', 'Proxmox'],
+      };
+      const lines = JSON.stringify(json, null, 2).split('\n');
+      return lines.map(l =>
+        l.replace(/"([^"]+)":/g, '<span style="color:#8BE9FD">"$1"</span>:')
+         .replace(/: "([^"]+)"/g, ': <span style="color:#F1FA8C">"$1"</span>')
+      );
+    },
+
+    'ls projects/': () => [
+      '<span style="color:#6272A4">drwxr-xr-x  gkilly.com       <span style="color:#50FA7B">Astro terminal personal site (this one)</span></span>',
+      '<span style="color:#6272A4">drwxr-xr-x  homelab-infra    <span style="color:#50FA7B">IaC configs for my Proxmox cluster</span></span>',
+      '<span style="color:#6272A4">drwxr-xr-x  project-three    <span style="color:#50FA7B">Short description — update in constants.ts</span></span>',
+    ],
+
+    'ls blog/': () => [
+      '<span style="color:#50FA7B">homelab/</span>              — self-hosting, docker, proxmox, networking',
+      '<span style="color:#FF79C6">music/</span>                — listening notes, gear, recommendations',
+      '<span style="color:#8BE9FD">software-engineering/</span> — architecture, patterns, career',
+      '<span style="color:#FFB86C">culture/</span>              — internet, books, film, tech commentary',
+      '',
+      'Run <span style="color:#50FA7B">cd blog/&lt;category&gt;</span> to navigate',
+    ],
+
+    social: () => [
+      '<span style="color:#BD93F9">[github]</span>   <a href="https://github.com/gkilly" target="_blank" style="color:#FF79C6">github.com/gkilly</a>',
+      '<span style="color:#BD93F9">[linkedin]</span> <a href="https://linkedin.com/in/gkilly" target="_blank" style="color:#FF79C6">linkedin.com/in/gkilly</a>',
+      '<span style="color:#BD93F9">[email]</span>    <a href="mailto:hello@gkilly.com" style="color:#FF79C6">hello@gkilly.com</a>',
+    ],
+
+    clear: () => {
+      output.innerHTML = '';
+      return [];
+    },
+  };
+
+  // ─── Print lines to output ────────────────────────────────────────────────
+  function print(lines: string | string[]) {
+    const arr = Array.isArray(lines) ? lines : [lines];
+    arr.forEach(line => {
+      const el = document.createElement('div');
+      el.innerHTML = line;
+      el.style.lineHeight = '1.6';
+      el.style.color = '#F8F8F2';
+      output.appendChild(el);
+    });
+    // scroll to bottom
+    output.scrollTop = output.scrollHeight;
+  }
+
+  function printPrompt(cmd: string) {
+    const el = document.createElement('div');
+    el.innerHTML = `<span style="color:#50FA7B">[gkilly@portfolio ~]$</span> <span style="color:#F8F8F2">${escapeHtml(cmd)}</span>`;
+    output.appendChild(el);
+  }
+
+  function escapeHtml(s: string) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  // ─── Handle Enter ─────────────────────────────────────────────────────────
+  input.addEventListener('keydown', (e: KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      const raw = input.value.trim();
+      input.value = '';
+      display.textContent = '';
+      historyIndex = -1;
+
+      if (!raw) return;
+
+      // push to history
+      history.unshift(raw);
+      if (history.length > 50) history.pop();
+
+      printPrompt(raw);
+
+      // cd blog/X navigation
+      const cdMatch = raw.match(/^cd\s+blog\/([a-z-]+)\/?$/);
+      if (cdMatch) {
+        const cat = cdMatch[1];
+        const valid = ['homelab', 'music', 'software-engineering', 'culture'];
+        if (valid.includes(cat)) {
+          print(`<span style="color:#50FA7B">Navigating to /blog/${cat}...</span>`);
+          setTimeout(() => { window.location.href = `/blog/${cat}`; }, 400);
+          return;
+        } else {
+          print(`<span style="color:#FF5555">bash: cd: blog/${cat}: No such directory</span>`);
+          return;
+        }
+      }
+
+      // cd blog
+      if (raw === 'cd blog' || raw === 'cd blog/') {
+        print('<span style="color:#50FA7B">Navigating to /blog...</span>');
+        setTimeout(() => { window.location.href = '/blog'; }, 400);
+        return;
+      }
+
+      // lookup command
+      const fn = COMMANDS[raw];
+      if (fn) {
+        const result = fn();
+        if (result.length > 0) print(result);
+      } else {
+        print(`<span style="color:#FF5555">bash: command not found: ${escapeHtml(raw)}</span>`);
+        print(`<span style="color:#6272A4">Type <span style="color:#50FA7B">help</span> to see available commands.</span>`);
+      }
+    }
+
+    // ─── History navigation ───────────────────────────────────────────────
+    if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (historyIndex < history.length - 1) {
+        historyIndex++;
+        input.value = history[historyIndex];
+        display.textContent = input.value;
+      }
+    }
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (historyIndex > 0) {
+        historyIndex--;
+        input.value = history[historyIndex];
+        display.textContent = input.value;
+      } else {
+        historyIndex = -1;
+        input.value = '';
+        display.textContent = '';
+      }
+    }
+
+    // Tab completion (basic)
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      const partial = input.value;
+      const cmds    = Object.keys(COMMANDS);
+      const match   = cmds.find(c => c.startsWith(partial) && c !== partial);
+      if (match) {
+        input.value = match;
+        display.textContent = match;
+      }
+    }
+  });
+
+  // ─── Welcome message ───────────────────────────────────────────────────────
+  print([
+    `<span style="color:#6272A4">Last login: ${new Date().toDateString()} on pts/0</span>`,
+    `<span style="color:#6272A4">Type <span style="color:#50FA7B">help</span> to see available commands.</span>`,
+    '',
+  ]);
+
+  // Auto-focus input
+  setTimeout(() => input.focus(), 100);
+})();
+</script>

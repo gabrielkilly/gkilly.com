@@ -1,0 +1,40 @@
+---
+import PostCard from './PostCard.astro';
+
+interface PostEntry {
+  slug:        string;
+  title:       string;
+  description: string;
+  date:        Date;
+  category:    string;
+  tags:        string[];
+}
+
+interface Props {
+  posts: PostEntry[];
+}
+
+const { posts } = Astro.props;
+---
+
+{posts.length === 0 ? (
+  <div class="text-center py-16">
+    <p class="text-[#6272A4] font-mono text-sm">
+      <span class="text-[#FF5555]">bash:</span> no posts found
+    </p>
+    <p class="text-[#6272A4] text-xs mt-2">Check back soon.</p>
+  </div>
+) : (
+  <div class="grid gap-4 sm:grid-cols-2">
+    {posts.map(post => (
+      <PostCard
+        title={post.title}
+        description={post.description}
+        date={post.date}
+        category={post.category}
+        tags={post.tags}
+        slug={post.slug}
+      />
+    ))}
+  </div>
+)}

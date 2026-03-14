@@ -1,0 +1,103 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import { formatDate, getReadingTime, categoryColor, categoryLabel } from '../lib/utils';
+import { SITE } from '../lib/constants';
+
+interface Props {
+  title:       string;
+  description: string;
+  date:        Date;
+  category:    string;
+  tags:        string[];
+  rawBody:     string;
+}
+
+const { title, description, date, category, tags, rawBody } = Astro.props;
+
+const color      = categoryColor(category);
+const label      = categoryLabel(category);
+const readTime   = getReadingTime(rawBody);
+const formattedDate = formatDate(date);
+
+// Breadcrumb segments
+const segments = [
+  { label: '~',            href: '/'                       },
+  { label: 'blog',         href: '/blog'                   },
+  { label: category,       href: `/blog/${category}`       },
+  { label: title,          href: null                      },
+];
+---
+
+<BaseLayout title={title} description={description}>
+  <article class="max-w-3xl mx-auto px-4 py-10">
+
+    <!-- Breadcrumb -->
+    <nav class="text-sm mb-8 text-[#6272A4]">
+      {segments.map((seg, i) => (
+        <>
+          {i > 0 && <span class="mx-1">/</span>}
+          {seg.href
+            ? <a href={seg.href} class="hover:text-[#BD93F9]">{seg.label}</a>
+            : <span class="text-[#F8F8F2]">{seg.label}</span>
+          }
+        </>
+      ))}
+    </nav>
+
+    <!-- Terminal window chrome -->
+    <div class="border border-[#6272A4] rounded-md overflow-hidden">
+
+      <!-- Title bar -->
+      <div class="flex items-center gap-2 px-4 py-2 bg-[#1E1F29] border-b border-[#6272A4]">
+        <span class="w-3 h-3 rounded-full bg-[#FF5555] opacity-70"></span>
+        <span class="w-3 h-3 rounded-full bg-[#F1FA8C] opacity-70"></span>
+        <span class="w-3 h-3 rounded-full bg-[#50FA7B] opacity-70"></span>
+        <span class="ml-3 text-xs text-[#6272A4] flex-1 text-center">
+          {SITE.name}@blog: ~/{category}/{title.toLowerCase().replace(/\s+/g, '-')}
+        </span>
+      </div>
+
+      <!-- Post header -->
+      <div class="bg-[#1E1F29] px-6 py-6 border-b border-[#6272A4]">
+        <div class="flex items-center gap-3 mb-3 flex-wrap">
+          <span
+            class="text-xs px-2 py-0.5 rounded border font-mono"
+            style={`color: ${color}; border-color: ${color}30; background: ${color}15`}
+          >
+            {label}
+          </span>
+          <span class="text-xs text-[#6272A4]">{formattedDate}</span>
+          <span class="text-xs text-[#6272A4]">·</span>
+          <span class="text-xs text-[#6272A4]">{readTime}</span>
+        </div>
+
+        <h1 class="text-2xl font-bold text-[#BD93F9] mb-3">{title}</h1>
+        <p class="text-[#6272A4] text-sm">{description}</p>
+
+        {tags.length > 0 && (
+          <div class="flex gap-2 mt-4 flex-wrap">
+            {tags.map(tag => (
+              <span class="text-xs text-[#6272A4] font-mono">#{tag}</span>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <!-- Post content -->
+      <div class="px-6 py-8 bg-[#282A36]">
+        <div class="prose">
+          <slot />
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Back link -->
+    <div class="mt-8 text-sm">
+      <a href="/blog" class="text-[#6272A4] hover:text-[#FF79C6] font-mono">
+        ← cd ../
+      </a>
+    </div>
+
+  </article>
+</BaseLayout>

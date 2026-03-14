@@ -1,0 +1,57 @@
+---
+import { formatDate, categoryColor, categoryLabel } from '../../lib/utils';
+
+interface Props {
+  title:       string;
+  description: string;
+  date:        Date;
+  category:    string;
+  tags:        string[];
+  slug:        string;   // e.g. "homelab/welcome-to-the-lab"
+}
+
+const { title, description, date, category, tags, slug } = Astro.props;
+const color = categoryColor(category);
+const label = categoryLabel(category);
+const href  = `/blog/${slug}`;
+---
+
+<a
+  href={href}
+  class="block group border border-[#6272A4] hover:border-[#BD93F9] rounded-md
+         bg-[#1E1F29] transition-colors duration-150 overflow-hidden"
+>
+  <!-- Top bar accent -->
+  <div class="h-0.5" style={`background: ${color}`}></div>
+
+  <div class="p-5">
+    <!-- Meta row -->
+    <div class="flex items-center gap-3 mb-3 flex-wrap">
+      <span
+        class="text-xs px-2 py-0.5 rounded border font-mono"
+        style={`color: ${color}; border-color: ${color}40; background: ${color}18`}
+      >
+        {label}
+      </span>
+      <span class="text-xs text-[#6272A4] font-mono">{formatDate(date)}</span>
+    </div>
+
+    <!-- Title -->
+    <h2 class="text-base font-bold text-[#F8F8F2] group-hover:text-[#BD93F9]
+               transition-colors mb-2 leading-snug">
+      {title}
+    </h2>
+
+    <!-- Description -->
+    <p class="text-sm text-[#6272A4] leading-relaxed line-clamp-2">{description}</p>
+
+    <!-- Tags -->
+    {tags.length > 0 && (
+      <div class="flex gap-2 mt-3 flex-wrap">
+        {tags.slice(0, 4).map(tag => (
+          <span class="text-xs text-[#6272A4] font-mono">#{tag}</span>
+        ))}
+      </div>
+    )}
+  </div>
+</a>

@@ -1,0 +1,115 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import TerminalWindow from '../components/terminal/TerminalWindow.astro';
+import TerminalPrompt from '../components/terminal/TerminalPrompt.astro';
+import SocialLinks from '../components/shared/SocialLinks.astro';
+import { SITE } from '../lib/constants';
+
+// Get latest 3 posts for the "recent" section
+import { getCollection } from 'astro:content';
+import { categoryColor } from '../lib/utils';
+const recentPosts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
+---
+
+<BaseLayout noHeader={true}>
+  <div class="min-h-screen flex flex-col items-center justify-center px-4 py-12">
+
+    <!-- Card + Terminal shell -->
+    <div class="w-full max-w-2xl">
+
+      <TerminalWindow
+        title={`${SITE.name}@portfolio: ~`}
+        noPad={true}
+      >
+        <div class="p-6 sm:p-8 space-y-6">
+
+          <!-- ── Identity block ───────────────────────────────────────── -->
+          <div>
+            <div class="text-xs text-[#6272A4] mb-3 font-mono">
+              <span class="text-[#50FA7B]">$</span> whoami
+            </div>
+
+            <div class="space-y-1">
+              <h1 class="text-2xl sm:text-3xl font-bold text-[#BD93F9] leading-tight">
+                {SITE.fullName}
+              </h1>
+              <p class="text-[#8BE9FD] font-mono text-sm">{SITE.title}</p>
+              <p class="text-[#6272A4] font-mono text-xs mt-2">{SITE.tagline}</p>
+            </div>
+          </div>
+
+          <!-- ── Social links ─────────────────────────────────────────── -->
+          <div>
+            <div class="text-xs text-[#6272A4] mb-2 font-mono">
+              <span class="text-[#50FA7B]">$</span> social
+            </div>
+            <SocialLinks />
+          </div>
+
+          <!-- ── Divider ──────────────────────────────────────────────── -->
+          <div class="border-t border-[#6272A4]/30"></div>
+
+          <!-- ── Interactive shell ────────────────────────────────────── -->
+          <div>
+            <div class="text-xs text-[#6272A4] mb-3 font-mono">
+              <span class="text-[#50FA7B]">$</span> bash
+              <span class="text-[#6272A4]"> # type 'help' for commands</span>
+            </div>
+            <TerminalPrompt />
+          </div>
+
+        </div>
+      </TerminalWindow>
+
+      <!-- ── Recent posts ──────────────────────────────────────────────── -->
+      {recentPosts.length > 0 && (
+        <div class="mt-8">
+          <p class="text-xs text-[#6272A4] font-mono mb-4">
+            <span class="text-[#50FA7B]">$</span> ls --recent ~/blog
+          </p>
+
+          <div class="space-y-2">
+            {recentPosts.map(post => {
+              const c = categoryColor(post.data.category);
+              return (
+                <a
+                  href={`/blog/${post.id}`}
+                  class="flex items-center gap-3 text-sm font-mono group py-1
+                         border-b border-[#6272A4]/20 hover:border-[#6272A4]/50
+                         transition-colors"
+                >
+                  <span class="text-[#6272A4] text-xs w-24 shrink-0">
+                    {post.data.date.toISOString().slice(0, 10)}
+                  </span>
+                  <span class="text-xs px-1.5 rounded shrink-0" style={`color:${c}`}>
+                    [{post.data.category.replace('software-engineering', 'eng')}]
+                  </span>
+                  <span class="text-[#F8F8F2] group-hover:text-[#BD93F9] transition-colors truncate">
+                    {post.data.title}
+                  </span>
+                </a>
+              );
+            })}
+          </div>
+
+          <div class="mt-4">
+            <a href="/blog" class="text-xs font-mono text-[#6272A4] hover:text-[#FF79C6]">
+              → cat all posts
+            </a>
+          </div>
+        </div>
+      )}
+
+    </div>
+
+    <!-- Back to top link / minimal nav -->
+    <div class="mt-10 text-xs font-mono text-[#6272A4]">
+      <a href="/blog" class="hover:text-[#BD93F9]">~/blog</a>
+      <span class="mx-2">·</span>
+      <span>{SITE.name} · {new Date().getFullYear()}</span>
+    </div>
+
+  </div>
+</BaseLayout>

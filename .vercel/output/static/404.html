@@ -1,0 +1,99 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="Senior Software Engineer. Writing about software, homelab, music, and culture."><meta property="og:title" content="404 — not found | gkilly"><meta property="og:description" content="Senior Software Engineer. Writing about software, homelab, music, and culture."><meta property="og:url" content="https://gkilly.com"><title>404 — not found | gkilly</title><!-- JetBrains Mono from Google Fonts --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="/_astro/BaseLayout.BD_nXLH9.css"></head> <body> <div id="boot-screen" class="fixed inset-0 z-[9999] bg-[#0D0D0D] flex flex-col justify-start
+         p-6 sm:p-12 font-mono text-sm overflow-hidden" style="display: none" aria-hidden="true" data-astro-cid-5i2wx5en> <div id="boot-lines" class="space-y-0.5" data-astro-cid-5i2wx5en></div> </div>  <script>
+(function () {
+  const STORAGE_KEY = 'gkilly_booted';
+  const screen      = document.getElementById('boot-screen');
+  const linesEl     = document.getElementById('boot-lines');
+
+  if (!screen || !linesEl) return;
+
+  // Skip if already booted this session
+  if (sessionStorage.getItem(STORAGE_KEY)) return;
+
+  // Show overlay
+  screen.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+
+  // ─── Boot log lines ─────────────────────────────────────────────────────
+  const GREEN  = '#50FA7B';
+  const CYAN   = '#8BE9FD';
+  const YELLOW = '#F1FA8C';
+  const MUTED  = '#6272A4';
+  const WHITE  = '#F8F8F2';
+  const RED    = '#FF5555';
+
+  const ok     = (msg) => `<span style="color:${GREEN}">[  OK  ]</span> <span style="color:${WHITE}">${msg}</span>`;
+  const info   = (msg) => `<span style="color:${CYAN}">[  **  ]</span> <span style="color:${MUTED}">${msg}</span>`;
+  const kernel = (ts, msg) => `<span style="color:${MUTED}">[${ts}]</span> <span style="color:${MUTED}">${msg}</span>`;
+  const login  = (msg) => `<span style="color:${YELLOW}">${msg}</span>`;
+
+  const LINES = [
+    { html: kernel('    0.000000', 'Linux version 6.12.0-gkilly (gcc 14.2.1) #1 SMP PREEMPT'),  delay: 60  },
+    { html: kernel('    0.000000', 'BIOS-e820: [mem 0x0000000000000000-0x000000000009fbff] usable'), delay: 40 },
+    { html: kernel('    0.001432', 'ACPI: RSDP 0x000F05B0 000024 (v02 GKILLY)'),             delay: 50  },
+    { html: kernel('    0.004812', 'PCI: Using configuration type 1 for base access'),        delay: 40  },
+    { html: kernel('    0.124532', 'random: crng init done'),                                 delay: 50  },
+    { html: kernel('    0.251004', 'NET: Registered PF_INET6 protocol family'),               delay: 40  },
+    { html: kernel('    0.312441', 'EXT4-fs (sda1): mounted filesystem'),                     delay: 50  },
+    { html: '',                                                                                delay: 30  },
+    { html: info('Starting Load Kernel Modules...'),                                           delay: 80  },
+    { html: ok('Loaded kernel modules'),                                                       delay: 60  },
+    { html: ok('Started udev Kernel Device Manager'),                                          delay: 70  },
+    { html: ok('Reached target Basic System'),                                                 delay: 60  },
+    { html: ok('Started Network Time Synchronization'),                                        delay: 80  },
+    { html: ok('Started OpenSSH server daemon'),                                               delay: 70  },
+    { html: ok('Started Docker Application Container Engine'),                                 delay: 90  },
+    { html: ok('Mounted /home/gkilly'),                                                        delay: 60  },
+    { html: ok('Started Proxmox API Daemon'),                                                  delay: 80  },
+    { html: ok('Started Nginx Proxy Manager'),                                                 delay: 70  },
+    { html: ok('Reached target Multi-User System'),                                            delay: 100 },
+    { html: '',                                                                                delay: 80  },
+    { html: `<span style="color:${WHITE}">gkilly.com</span> <span style="color:${MUTED}">v1.0.0 (kernel 6.12.0-gkilly)</span>`, delay: 80 },
+    { html: '',                                                                                delay: 40  },
+    { html: login('gkilly login: '),                                                           delay: 200 },
+    { html: `<span style="color:${GREEN}">gkilly</span>`,                                     delay: 80  },
+    { html: `<span style="color:${GREEN}">Password:</span> <span style="color:${MUTED}">••••••••</span>`, delay: 300 },
+    { html: '',                                                                                delay: 100 },
+    { html: `<span style="color:${CYAN}">Welcome back, gkilly.</span>`,                       delay: 80  },
+    { html: `<span style="color:${MUTED}">Last login: ${new Date().toDateString()}</span>`,   delay: 60  },
+  ];
+
+  // ─── Render lines sequentially ────────────────────────────────────────────
+  let total = 0;
+  LINES.forEach((line, i) => {
+    total += line.delay;
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.innerHTML = line.html || '&nbsp;';
+      el.classList.add('boot-line');
+      linesEl.appendChild(el);
+      // auto-scroll
+      screen.scrollTop = screen.scrollHeight;
+    }, total);
+  });
+
+  // ─── Fade out and reveal the page ─────────────────────────────────────────
+  setTimeout(() => {
+    screen.classList.add('fade-out');
+    document.body.style.overflow = '';
+    setTimeout(() => {
+      screen.style.display = 'none';
+    }, 650);
+    sessionStorage.setItem(STORAGE_KEY, '1');
+  }, total + 600);
+
+})();
+</script> <header class="border-b border-[#6272A4]/40 sticky top-0 z-50 bg-[#282A36]/95 backdrop-blur-sm"> <nav class="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between"> <!-- Prompt --> <a href="/" class="font-mono text-sm group"> <span class="text-[#50FA7B]">gkilly</span> <span class="text-[#6272A4]">@portfolio</span> <span class="text-[#F8F8F2]">:</span> <span class="text-[#8BE9FD]">~</span> <span class="text-[#F8F8F2]">$</span> <span class="inline-block w-2 h-4 bg-[#F8F8F2] ml-1 align-middle opacity-70
+               group-hover:opacity-100" style="animation: blink-cursor 1s step-end infinite"></span> </a> <!-- Nav links --> <div class="flex items-center gap-4"> <a href="/" class="text-sm font-mono transition-colors text-[#6272A4] hover:text-[#F8F8F2]"> ~ </a><a href="/blog" class="text-sm font-mono transition-colors text-[#6272A4] hover:text-[#F8F8F2]"> blog </a> </div> </nav> </header> <main>  <div class="min-h-[60vh] flex items-center justify-center px-4"> <div class="font-mono text-center space-y-4"> <p class="text-[#6272A4] text-sm"> <span class="text-[#50FA7B]">$</span> cd /404/ </p> <p class="text-[#FF5555] text-sm">
+bash: cd: /404/: No such file or directory
+</p> <p class="text-2xl font-bold text-[#BD93F9]">404</p> <p class="text-[#6272A4] text-sm">
+The page you're looking for doesn't exist.
+</p> <div class="pt-4 space-x-4"> <a href="/" class="text-sm text-[#FF79C6] hover:text-[#BD93F9]">cd ~</a> <a href="/blog" class="text-sm text-[#FF79C6] hover:text-[#BD93F9]">cd ~/blog</a> </div> </div> </div>  </main> <footer class="border-t border-[#6272A4]/30 mt-16"> <div class="max-w-3xl mx-auto px-4 py-6"> <p class="text-xs text-[#6272A4] font-mono text-center"> <span class="text-[#50FA7B]">[  OK  ]</span>
+&nbsp;gkilly · 2026 ·
+<a href="https://github.com/gkilly" target="_blank" rel="noopener" class="hover:text-[#BD93F9]">
+source
+</a>
+&nbsp;· built with
+<a href="https://astro.build" target="_blank" rel="noopener" class="hover:text-[#BD93F9]">
+astro
+</a> </p> </div> </footer> </body></html>

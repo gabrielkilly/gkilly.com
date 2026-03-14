@@ -1,0 +1,117 @@
+---
+// BootSequence — Full-screen fake boot animation
+// Fires once per session via sessionStorage
+---
+
+<div
+  id="boot-screen"
+  class="fixed inset-0 z-[9999] bg-[#0D0D0D] flex flex-col justify-start
+         p-6 sm:p-12 font-mono text-sm overflow-hidden"
+  style="display: none"
+  aria-hidden="true"
+>
+  <div id="boot-lines" class="space-y-0.5"></div>
+</div>
+
+<style>
+  #boot-screen {
+    transition: opacity 0.6s ease;
+  }
+  #boot-screen.fade-out {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .boot-line {
+    opacity: 0;
+    animation: line-appear 0.05s forwards;
+  }
+  @keyframes line-appear {
+    to { opacity: 1; }
+  }
+</style>
+
+<script is:inline>
+(function () {
+  const STORAGE_KEY = 'gkilly_booted';
+  const screen      = document.getElementById('boot-screen');
+  const linesEl     = document.getElementById('boot-lines');
+
+  if (!screen || !linesEl) return;
+
+  // Skip if already booted this session
+  if (sessionStorage.getItem(STORAGE_KEY)) return;
+
+  // Show overlay
+  screen.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+
+  // ─── Boot log lines ─────────────────────────────────────────────────────
+  const GREEN  = '#50FA7B';
+  const CYAN   = '#8BE9FD';
+  const YELLOW = '#F1FA8C';
+  const MUTED  = '#6272A4';
+  const WHITE  = '#F8F8F2';
+  const RED    = '#FF5555';
+
+  const ok     = (msg) => `<span style="color:${GREEN}">[  OK  ]</span> <span style="color:${WHITE}">${msg}</span>`;
+  const info   = (msg) => `<span style="color:${CYAN}">[  **  ]</span> <span style="color:${MUTED}">${msg}</span>`;
+  const kernel = (ts, msg) => `<span style="color:${MUTED}">[${ts}]</span> <span style="color:${MUTED}">${msg}</span>`;
+  const login  = (msg) => `<span style="color:${YELLOW}">${msg}</span>`;
+
+  const LINES = [
+    { html: kernel('    0.000000', 'Linux version 6.12.0-gkilly (gcc 14.2.1) #1 SMP PREEMPT'),  delay: 60  },
+    { html: kernel('    0.000000', 'BIOS-e820: [mem 0x0000000000000000-0x000000000009fbff] usable'), delay: 40 },
+    { html: kernel('    0.001432', 'ACPI: RSDP 0x000F05B0 000024 (v02 GKILLY)'),             delay: 50  },
+    { html: kernel('    0.004812', 'PCI: Using configuration type 1 for base access'),        delay: 40  },
+    { html: kernel('    0.124532', 'random: crng init done'),                                 delay: 50  },
+    { html: kernel('    0.251004', 'NET: Registered PF_INET6 protocol family'),               delay: 40  },
+    { html: kernel('    0.312441', 'EXT4-fs (sda1): mounted filesystem'),                     delay: 50  },
+    { html: '',                                                                                delay: 30  },
+    { html: info('Starting Load Kernel Modules...'),                                           delay: 80  },
+    { html: ok('Loaded kernel modules'),                                                       delay: 60  },
+    { html: ok('Started udev Kernel Device Manager'),                                          delay: 70  },
+    { html: ok('Reached target Basic System'),                                                 delay: 60  },
+    { html: ok('Started Network Time Synchronization'),                                        delay: 80  },
+    { html: ok('Started OpenSSH server daemon'),                                               delay: 70  },
+    { html: ok('Started Docker Application Container Engine'),                                 delay: 90  },
+    { html: ok('Mounted /home/gkilly'),                                                        delay: 60  },
+    { html: ok('Started Proxmox API Daemon'),                                                  delay: 80  },
+    { html: ok('Started Nginx Proxy Manager'),                                                 delay: 70  },
+    { html: ok('Reached target Multi-User System'),                                            delay: 100 },
+    { html: '',                                                                                delay: 80  },
+    { html: `<span style="color:${WHITE}">gkilly.com</span> <span style="color:${MUTED}">v1.0.0 (kernel 6.12.0-gkilly)</span>`, delay: 80 },
+    { html: '',                                                                                delay: 40  },
+    { html: login('gkilly login: '),                                                           delay: 200 },
+    { html: `<span style="color:${GREEN}">gkilly</span>`,                                     delay: 80  },
+    { html: `<span style="color:${GREEN}">Password:</span> <span style="color:${MUTED}">••••••••</span>`, delay: 300 },
+    { html: '',                                                                                delay: 100 },
+    { html: `<span style="color:${CYAN}">Welcome back, gkilly.</span>`,                       delay: 80  },
+    { html: `<span style="color:${MUTED}">Last login: ${new Date().toDateString()}</span>`,   delay: 60  },
+  ];
+
+  // ─── Render lines sequentially ────────────────────────────────────────────
+  let total = 0;
+  LINES.forEach((line, i) => {
+    total += line.delay;
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.innerHTML = line.html || '&nbsp;';
+      el.classList.add('boot-line');
+      linesEl.appendChild(el);
+      // auto-scroll
+      screen.scrollTop = screen.scrollHeight;
+    }, total);
+  });
+
+  // ─── Fade out and reveal the page ─────────────────────────────────────────
+  setTimeout(() => {
+    screen.classList.add('fade-out');
+    document.body.style.overflow = '';
+    setTimeout(() => {
+      screen.style.display = 'none';
+    }, 650);
+    sessionStorage.setItem(STORAGE_KEY, '1');
+  }, total + 600);
+
+})();
+</script>

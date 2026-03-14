@@ -1,0 +1,32 @@
+---
+import { SITE } from '../../lib/constants';
+
+interface Link {
+  label: string;
+  href:  string;
+  color: string;
+}
+
+const links: Link[] = [
+  { label: 'github',   href: SITE.github,   color: '#BD93F9' },
+  { label: 'linkedin', href: SITE.linkedin, color: '#8BE9FD' },
+  { label: 'email',    href: `mailto:${SITE.email}`, color: '#FF79C6' },
+];
+---
+
+<div class="flex items-center gap-4 flex-wrap">
+  {links.map(link => (
+    <a
+      href={link.href}
+      target={link.href.startsWith('mailto') ? undefined : '_blank'}
+      rel="noopener noreferrer"
+      class="font-mono text-sm transition-colors duration-100 flex items-center gap-1"
+      style={`color: #6272A4`}
+      data-link-color={link.color}
+    >
+      <span class="text-[#6272A4]">[</span>
+      <span class="link-label" style={`color: ${link.color}`}>{link.label}</span>
+      <span class="text-[#6272A4]">]</span>
+    </a>
+  ))}
+</div>

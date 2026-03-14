@@ -1,0 +1,108 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="Writing by Your Name on homelab, music, software engineering, and culture."><meta property="og:title" content="blog | gkilly"><meta property="og:description" content="Writing by Your Name on homelab, music, software engineering, and culture."><meta property="og:url" content="https://gkilly.com"><title>blog | gkilly</title><!-- JetBrains Mono from Google Fonts --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="/_astro/BaseLayout.BD_nXLH9.css"></head> <body> <div id="boot-screen" class="fixed inset-0 z-[9999] bg-[#0D0D0D] flex flex-col justify-start
+         p-6 sm:p-12 font-mono text-sm overflow-hidden" style="display: none" aria-hidden="true" data-astro-cid-5i2wx5en> <div id="boot-lines" class="space-y-0.5" data-astro-cid-5i2wx5en></div> </div>  <script>
+(function () {
+  const STORAGE_KEY = 'gkilly_booted';
+  const screen      = document.getElementById('boot-screen');
+  const linesEl     = document.getElementById('boot-lines');
+
+  if (!screen || !linesEl) return;
+
+  // Skip if already booted this session
+  if (sessionStorage.getItem(STORAGE_KEY)) return;
+
+  // Show overlay
+  screen.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+
+  // ─── Boot log lines ─────────────────────────────────────────────────────
+  const GREEN  = '#50FA7B';
+  const CYAN   = '#8BE9FD';
+  const YELLOW = '#F1FA8C';
+  const MUTED  = '#6272A4';
+  const WHITE  = '#F8F8F2';
+  const RED    = '#FF5555';
+
+  const ok     = (msg) => `<span style="color:${GREEN}">[  OK  ]</span> <span style="color:${WHITE}">${msg}</span>`;
+  const info   = (msg) => `<span style="color:${CYAN}">[  **  ]</span> <span style="color:${MUTED}">${msg}</span>`;
+  const kernel = (ts, msg) => `<span style="color:${MUTED}">[${ts}]</span> <span style="color:${MUTED}">${msg}</span>`;
+  const login  = (msg) => `<span style="color:${YELLOW}">${msg}</span>`;
+
+  const LINES = [
+    { html: kernel('    0.000000', 'Linux version 6.12.0-gkilly (gcc 14.2.1) #1 SMP PREEMPT'),  delay: 60  },
+    { html: kernel('    0.000000', 'BIOS-e820: [mem 0x0000000000000000-0x000000000009fbff] usable'), delay: 40 },
+    { html: kernel('    0.001432', 'ACPI: RSDP 0x000F05B0 000024 (v02 GKILLY)'),             delay: 50  },
+    { html: kernel('    0.004812', 'PCI: Using configuration type 1 for base access'),        delay: 40  },
+    { html: kernel('    0.124532', 'random: crng init done'),                                 delay: 50  },
+    { html: kernel('    0.251004', 'NET: Registered PF_INET6 protocol family'),               delay: 40  },
+    { html: kernel('    0.312441', 'EXT4-fs (sda1): mounted filesystem'),                     delay: 50  },
+    { html: '',                                                                                delay: 30  },
+    { html: info('Starting Load Kernel Modules...'),                                           delay: 80  },
+    { html: ok('Loaded kernel modules'),                                                       delay: 60  },
+    { html: ok('Started udev Kernel Device Manager'),                                          delay: 70  },
+    { html: ok('Reached target Basic System'),                                                 delay: 60  },
+    { html: ok('Started Network Time Synchronization'),                                        delay: 80  },
+    { html: ok('Started OpenSSH server daemon'),                                               delay: 70  },
+    { html: ok('Started Docker Application Container Engine'),                                 delay: 90  },
+    { html: ok('Mounted /home/gkilly'),                                                        delay: 60  },
+    { html: ok('Started Proxmox API Daemon'),                                                  delay: 80  },
+    { html: ok('Started Nginx Proxy Manager'),                                                 delay: 70  },
+    { html: ok('Reached target Multi-User System'),                                            delay: 100 },
+    { html: '',                                                                                delay: 80  },
+    { html: `<span style="color:${WHITE}">gkilly.com</span> <span style="color:${MUTED}">v1.0.0 (kernel 6.12.0-gkilly)</span>`, delay: 80 },
+    { html: '',                                                                                delay: 40  },
+    { html: login('gkilly login: '),                                                           delay: 200 },
+    { html: `<span style="color:${GREEN}">gkilly</span>`,                                     delay: 80  },
+    { html: `<span style="color:${GREEN}">Password:</span> <span style="color:${MUTED}">••••••••</span>`, delay: 300 },
+    { html: '',                                                                                delay: 100 },
+    { html: `<span style="color:${CYAN}">Welcome back, gkilly.</span>`,                       delay: 80  },
+    { html: `<span style="color:${MUTED}">Last login: ${new Date().toDateString()}</span>`,   delay: 60  },
+  ];
+
+  // ─── Render lines sequentially ────────────────────────────────────────────
+  let total = 0;
+  LINES.forEach((line, i) => {
+    total += line.delay;
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.innerHTML = line.html || '&nbsp;';
+      el.classList.add('boot-line');
+      linesEl.appendChild(el);
+      // auto-scroll
+      screen.scrollTop = screen.scrollHeight;
+    }, total);
+  });
+
+  // ─── Fade out and reveal the page ─────────────────────────────────────────
+  setTimeout(() => {
+    screen.classList.add('fade-out');
+    document.body.style.overflow = '';
+    setTimeout(() => {
+      screen.style.display = 'none';
+    }, 650);
+    sessionStorage.setItem(STORAGE_KEY, '1');
+  }, total + 600);
+
+})();
+</script> <header class="border-b border-[#6272A4]/40 sticky top-0 z-50 bg-[#282A36]/95 backdrop-blur-sm"> <nav class="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between"> <!-- Prompt --> <a href="/" class="font-mono text-sm group"> <span class="text-[#50FA7B]">gkilly</span> <span class="text-[#6272A4]">@portfolio</span> <span class="text-[#F8F8F2]">:</span> <span class="text-[#8BE9FD]">~</span> <span class="text-[#F8F8F2]">$</span> <span class="inline-block w-2 h-4 bg-[#F8F8F2] ml-1 align-middle opacity-70
+               group-hover:opacity-100" style="animation: blink-cursor 1s step-end infinite"></span> </a> <!-- Nav links --> <div class="flex items-center gap-4"> <a href="/" class="text-sm font-mono transition-colors text-[#6272A4] hover:text-[#F8F8F2]"> ~ </a><a href="/blog" class="text-sm font-mono transition-colors text-[#BD93F9]"> blog </a> </div> </nav> </header> <main>  <section class="max-w-3xl mx-auto px-4 py-10"> <!-- Header --> <div class="mb-8"> <p class="text-[#6272A4] font-mono text-sm mb-1"> <span class="text-[#50FA7B]">$</span> ls ~/blog
+</p> <h1 class="text-2xl font-bold text-[#BD93F9]">blog</h1> <p class="text-sm text-[#6272A4] mt-1"> 4 posts — homelab · music · engineering · culture
+</p> </div> <nav class="flex items-center gap-1 flex-wrap mb-8"> <!-- "All" tab --> <a href="/blog" class="
+      text-xs font-mono px-3 py-1.5 rounded border transition-colors duration-100
+      border-[#BD93F9] text-[#BD93F9] bg-[#BD93F9]/10
+    "> All </a> <!-- Category tabs --> <a href="/blog/homelab" class="text-xs font-mono px-3 py-1.5 rounded border transition-colors duration-100" style="color: #6272A4; border-color: #6272A4" data-hover-color="#50FA7B"> Homelab </a><a href="/blog/music" class="text-xs font-mono px-3 py-1.5 rounded border transition-colors duration-100" style="color: #6272A4; border-color: #6272A4" data-hover-color="#FF79C6"> Music </a><a href="/blog/software-engineering" class="text-xs font-mono px-3 py-1.5 rounded border transition-colors duration-100" style="color: #6272A4; border-color: #6272A4" data-hover-color="#8BE9FD"> Engineering </a><a href="/blog/culture" class="text-xs font-mono px-3 py-1.5 rounded border transition-colors duration-100" style="color: #6272A4; border-color: #6272A4" data-hover-color="#FFB86C"> Culture </a> </nav> <script type="module">document.querySelectorAll("a[data-hover-color]").forEach(o=>{const r=o.dataset.hoverColor;o.addEventListener("mouseenter",()=>{o.style.background||(o.style.color=r,o.style.borderColor=r)}),o.addEventListener("mouseleave",()=>{o.style.background||(o.style.color="#6272A4",o.style.borderColor="#6272A4")})});</script> <div class="grid gap-4 sm:grid-cols-2"><a href="/blog/software-engineering/building-this-site" class="block group border border-[#6272A4] hover:border-[#BD93F9] rounded-md
+         bg-[#1E1F29] transition-colors duration-150 overflow-hidden"> <!-- Top bar accent --> <div class="h-0.5" style="background: #8BE9FD"></div> <div class="p-5"> <!-- Meta row --> <div class="flex items-center gap-3 mb-3 flex-wrap"> <span class="text-xs px-2 py-0.5 rounded border font-mono" style="color: #8BE9FD; border-color: #8BE9FD40; background: #8BE9FD18"> Engineering </span> <span class="text-xs text-[#6272A4] font-mono">Mar 14, 2026</span> </div> <!-- Title --> <h2 class="text-base font-bold text-[#F8F8F2] group-hover:text-[#BD93F9]
+               transition-colors mb-2 leading-snug"> Building This Site </h2> <!-- Description --> <p class="text-sm text-[#6272A4] leading-relaxed line-clamp-2">How I built gkilly.com — the decisions behind a terminal-themed Astro site with a fake interactive shell.</p> <!-- Tags --> <div class="flex gap-2 mt-3 flex-wrap"> <span class="text-xs text-[#6272A4] font-mono">#astro</span><span class="text-xs text-[#6272A4] font-mono">#typescript</span><span class="text-xs text-[#6272A4] font-mono">#design</span><span class="text-xs text-[#6272A4] font-mono">#web</span> </div> </div> </a><a href="/blog/music/what-im-listening-to" class="block group border border-[#6272A4] hover:border-[#BD93F9] rounded-md
+         bg-[#1E1F29] transition-colors duration-150 overflow-hidden"> <!-- Top bar accent --> <div class="h-0.5" style="background: #FF79C6"></div> <div class="p-5"> <!-- Meta row --> <div class="flex items-center gap-3 mb-3 flex-wrap"> <span class="text-xs px-2 py-0.5 rounded border font-mono" style="color: #FF79C6; border-color: #FF79C640; background: #FF79C618"> Music </span> <span class="text-xs text-[#6272A4] font-mono">Mar 12, 2026</span> </div> <!-- Title --> <h2 class="text-base font-bold text-[#F8F8F2] group-hover:text-[#BD93F9]
+               transition-colors mb-2 leading-snug"> What I&#39;m Listening To Right Now </h2> <!-- Description --> <p class="text-sm text-[#6272A4] leading-relaxed line-clamp-2">A rotating record of albums, artists, and genres currently on heavy rotation — from jazz to industrial techno.</p> <!-- Tags --> <div class="flex gap-2 mt-3 flex-wrap"> <span class="text-xs text-[#6272A4] font-mono">#ambient</span><span class="text-xs text-[#6272A4] font-mono">#jazz</span><span class="text-xs text-[#6272A4] font-mono">#electronic</span><span class="text-xs text-[#6272A4] font-mono">#recommendations</span> </div> </div> </a><a href="/blog/homelab/welcome-to-the-lab" class="block group border border-[#6272A4] hover:border-[#BD93F9] rounded-md
+         bg-[#1E1F29] transition-colors duration-150 overflow-hidden"> <!-- Top bar accent --> <div class="h-0.5" style="background: #50FA7B"></div> <div class="p-5"> <!-- Meta row --> <div class="flex items-center gap-3 mb-3 flex-wrap"> <span class="text-xs px-2 py-0.5 rounded border font-mono" style="color: #50FA7B; border-color: #50FA7B40; background: #50FA7B18"> Homelab </span> <span class="text-xs text-[#6272A4] font-mono">Mar 10, 2026</span> </div> <!-- Title --> <h2 class="text-base font-bold text-[#F8F8F2] group-hover:text-[#BD93F9]
+               transition-colors mb-2 leading-snug"> Welcome to the Lab </h2> <!-- Description --> <p class="text-sm text-[#6272A4] leading-relaxed line-clamp-2">My homelab journey — from a single Raspberry Pi to a multi-node Proxmox cluster running 20+ services.</p> <!-- Tags --> <div class="flex gap-2 mt-3 flex-wrap"> <span class="text-xs text-[#6272A4] font-mono">#proxmox</span><span class="text-xs text-[#6272A4] font-mono">#docker</span><span class="text-xs text-[#6272A4] font-mono">#networking</span><span class="text-xs text-[#6272A4] font-mono">#self-hosting</span> </div> </div> </a><a href="/blog/culture/the-internet-we-lost" class="block group border border-[#6272A4] hover:border-[#BD93F9] rounded-md
+         bg-[#1E1F29] transition-colors duration-150 overflow-hidden"> <!-- Top bar accent --> <div class="h-0.5" style="background: #FFB86C"></div> <div class="p-5"> <!-- Meta row --> <div class="flex items-center gap-3 mb-3 flex-wrap"> <span class="text-xs px-2 py-0.5 rounded border font-mono" style="color: #FFB86C; border-color: #FFB86C40; background: #FFB86C18"> Culture </span> <span class="text-xs text-[#6272A4] font-mono">Mar 08, 2026</span> </div> <!-- Title --> <h2 class="text-base font-bold text-[#F8F8F2] group-hover:text-[#BD93F9]
+               transition-colors mb-2 leading-snug"> The Internet We Lost </h2> <!-- Description --> <p class="text-sm text-[#6272A4] leading-relaxed line-clamp-2">On the old web, personal sites, webrings, and why I still think owning your corner of the internet matters.</p> <!-- Tags --> <div class="flex gap-2 mt-3 flex-wrap"> <span class="text-xs text-[#6272A4] font-mono">#internet</span><span class="text-xs text-[#6272A4] font-mono">#tech-culture</span><span class="text-xs text-[#6272A4] font-mono">#indie-web</span><span class="text-xs text-[#6272A4] font-mono">#nostalgia</span> </div> </div> </a></div> </section>  </main> <footer class="border-t border-[#6272A4]/30 mt-16"> <div class="max-w-3xl mx-auto px-4 py-6"> <p class="text-xs text-[#6272A4] font-mono text-center"> <span class="text-[#50FA7B]">[  OK  ]</span>
+&nbsp;gkilly · 2026 ·
+<a href="https://github.com/gkilly" target="_blank" rel="noopener" class="hover:text-[#BD93F9]">
+source
+</a>
+&nbsp;· built with
+<a href="https://astro.build" target="_blank" rel="noopener" class="hover:text-[#BD93F9]">
+astro
+</a> </p> </div> </footer> </body></html>
